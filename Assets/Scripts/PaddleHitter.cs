@@ -2,24 +2,28 @@ using UnityEngine;
 
 public class PaddleHitter : MonoBehaviour
 {
-    public float hitAngle = 60f;
-    public float hitSpeed = 200f;
-    private float current = 0f;
-    private bool hitting = false;
+    public float hitAngle = 45f;
+    public float hitSpeed = 300f;
 
-    void Update()
-    {
-        if (hitting && current < hitAngle)
-        {
-            float rotateAmount = hitSpeed * Time.deltaTime;
-            transform.Rotate(Vector3.right, rotateAmount); // Try forward or up if it doesn’t move
-            current += rotateAmount;
-        }
-    }
+    private float currentAngle = 0f;
+    private bool isHitting = false;
 
     public void Hit()
     {
-        hitting = true;
-        current = 0f;
+        isHitting = true;
+        currentAngle = 0f;
+    }
+
+    void Update()
+    {
+        if (isHitting)
+        {
+            float step = hitSpeed * Time.deltaTime;
+            transform.Rotate(Vector3.up, step);
+            currentAngle += step;
+
+            if (currentAngle >= hitAngle)
+                isHitting = false;
+        }
     }
 }
