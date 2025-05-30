@@ -6,20 +6,18 @@ public class BallDropper : MonoBehaviour
     [Header("Ball Drop Settings")]
     public GameObject ballPrefab;
 
-    [Tooltip("Fixed drop position for the ball.")]
-    private Vector3 dropPosition = new Vector3(-3.087f, 2.0542f, -1.37f);
+    [Tooltip("Drop position for the ball")]
+    public Transform dropPoint;
 
     [Header("UI Settings")]
-    public TextMeshProUGUI dropPromptUI; // Assign in Inspector
+    public TextMeshProUGUI dropPromptUI;
 
     private bool playerInRange = false;
 
     void Start()
     {
         if (dropPromptUI != null)
-        {
             dropPromptUI.enabled = false;
-        }
     }
 
     void Update()
@@ -33,7 +31,6 @@ public class BallDropper : MonoBehaviour
             {
                 DropBall();
 
-                // Optional: hide prompt after drop
                 if (dropPromptUI != null)
                     dropPromptUI.enabled = false;
             }
@@ -45,32 +42,30 @@ public class BallDropper : MonoBehaviour
         }
     }
 
-    void DropBall()
+    public GameObject DropBall()
     {
-        if (ballPrefab != null)
+        if (ballPrefab != null && dropPoint != null)
         {
-            Instantiate(ballPrefab, dropPosition, Quaternion.identity);
-            Debug.Log("✅ Ball Dropped at: " + dropPosition);
+            GameObject newBall = Instantiate(ballPrefab, dropPoint.position, Quaternion.identity);
+            Debug.Log("✅ Ball dropped at " + dropPoint.position);
+            return newBall;
         }
         else
         {
-            Debug.LogWarning("⚠️ Ball Prefab is not assigned!");
+            Debug.LogWarning("⚠️ Ball prefab or dropPoint is not assigned.");
+            return null;
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
-        {
             playerInRange = true;
-        }
     }
 
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
-        {
             playerInRange = false;
-        }
     }
 }
