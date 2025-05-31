@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
 {
     [Header("References")]
     public TrajectorySimulator predictor;
+    public BallTimeTracker timeTracker;
 
     [Header("User Input (TMP Input Fields)")]
     public TMP_InputField paddleVelocityInput;
@@ -20,9 +21,17 @@ public class UIManager : MonoBehaviour
 
     [HideInInspector] public float lastPredictedAngle;
     [HideInInspector] public float lastPredictedVelocity;
+    [HideInInspector] public float lastTargetX;
+
+    [Header("Visual Debug")]
+    public GameObject markerPrefab;
+
 
     public void OnPredictPressed()
     {
+        GameObject existing = GameObject.Find("Marker(Clone)");
+        if (existing) Destroy(existing);
+
         if (predictor == null)
         {
             Debug.LogWarning("TrajectorySimulator not assigned!");
@@ -50,14 +59,32 @@ public class UIManager : MonoBehaviour
 
         lastPredictedAngle = bestAngle;
         lastPredictedVelocity = predictor.GetVelocityForAngle(bestAngle);
+        lastTargetX = targetX;
 
-        paddleVelocityText.text = $"Paddle Velocity: {paddleVelocity:F2} m/s";
-        corValueText.text = $"COR: {cor:F2}";
-        outputAngleText.text = $"Suggested Paddle Angle: {bestAngle:F2}°";
+        if (paddleVelocityText != null)
+            paddleVelocityText.text = $"Paddle Velocity: {paddleVelocity:F2} m/s";
+
+        if (corValueText != null)
+            corValueText.text = $"COR: {cor:F2}";
+
+        if (outputAngleText != null)
+            outputAngleText.text = $"Suggested Paddle Angle: {bestAngle:F2}°";
 
         string zone = predictor.GetZoneColor(targetX);
-        zoneColorText.text = $"Zone Color: {zone}";
+        if (zoneColorText != null)
+            zoneColorText.text = $"Zone Color: {zone}";
 
         Debug.Log($"TargetX={targetX} → Best Angle: {bestAngle:F2}°");
+
+        if (timeTracker != null)
+            timeTracker.StartSimulation();
+
+        if (markerPrefab != null)
+        {
+            Vector3 markerPosition = new Vector3(lastTargetX, 0.01f, 0f); // y slightly above ground
+            Instantiate(markerPrefab, markerPosition, Quaternion.identity);
+            Debug.Log($"🟢 Marker placed at Sx = {lastTargetX:F2} m");
+        }
+
     }
 }

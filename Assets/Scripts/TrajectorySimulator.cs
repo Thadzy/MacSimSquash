@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using System.Text;
 
 [System.Serializable]
 public class TrajectoryPoint
@@ -25,27 +23,18 @@ public class TrajectorySimulator : MonoBehaviour
     public float maxAngle = 70f;
     public float angleStep = 0.1f;
 
-    [Header("Debug")]
-    public bool exportCSV = false;
-    public bool drawTrajectoryGraph = false;
-    public LineRenderer lineRenderer;
-
-    [Header("Output")]
     public List<TrajectoryPoint> trajectoryData = new();
 
     public void Simulate()
     {
         trajectoryData.Clear();
-        float m = massBall;
-        float M = massPaddle;
-        float e = cor;
-        float ub = Mathf.Sqrt(2 * gravity * launchHeight);
+        float m = massBall, M = massPaddle, e = cor;
+        float ub = Mathf.Sqrt(2 * gravity * launchHeight); // drop speed at impact
 
         for (float thetaDeg = minAngle; thetaDeg <= maxAngle; thetaDeg += angleStep)
         {
             float theta = Mathf.Deg2Rad * thetaDeg;
-            float sinT = Mathf.Sin(theta);
-            float cosT = Mathf.Cos(theta);
+            float sinT = Mathf.Sin(theta), cosT = Mathf.Cos(theta);
 
             float Vp = ((M - e * m) * paddleVelocity * sinT - m * ub * cosT * (1 + e)) / (m + M);
             float Vb = e * ub * cosT + e * paddleVelocity * sinT + Vp;
@@ -82,13 +71,12 @@ public class TrajectorySimulator : MonoBehaviour
         return best;
     }
 
-    public float GetVelocityForAngle(float targetAngle)
+    public float GetVelocityForAngle(float angleDeg)
     {
         float m = massBall, M = massPaddle, e = cor;
         float ub = Mathf.Sqrt(2 * gravity * launchHeight);
-        float theta = Mathf.Deg2Rad * targetAngle;
-        float sinT = Mathf.Sin(theta);
-        float cosT = Mathf.Cos(theta);
+        float theta = Mathf.Deg2Rad * angleDeg;
+        float sinT = Mathf.Sin(theta), cosT = Mathf.Cos(theta);
 
         float Vp = ((M - e * m) * paddleVelocity * sinT - m * ub * cosT * (1 + e)) / (m + M);
         float Vb = e * ub * cosT + e * paddleVelocity * sinT + Vp;
@@ -96,13 +84,13 @@ public class TrajectorySimulator : MonoBehaviour
         return Mathf.Sqrt(Vb * Vb + Mathf.Pow(ub * sinT, 2));
     }
 
-    public string GetZoneColor(float distance)
+    public string GetZoneColor(float x)
     {
-        if (distance >= 0.75f && distance < 1.13f) return "Light Blue";
-        if (distance >= 1.13f && distance < 1.51f) return "Green";
-        if (distance >= 1.51f && distance < 1.89f) return "Yellow";
-        if (distance >= 1.89f && distance < 2.27f) return "Orange";
-        if (distance >= 2.27f && distance <= 2.65f) return "Red";
+        if (x >= 0.75f && x < 1.13f) return "Light Blue";
+        if (x >= 1.13f && x < 1.51f) return "Green";
+        if (x >= 1.51f && x < 1.89f) return "Yellow";
+        if (x >= 1.89f && x < 2.27f) return "Orange";
+        if (x >= 2.27f && x <= 2.65f) return "Red";
         return "Out of Bounds";
     }
 }

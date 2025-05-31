@@ -1,53 +1,48 @@
 using UnityEngine;
-using TMPro;
 
 public class BallDropper : MonoBehaviour
 {
     public GameObject ballPrefab;
     public Transform dropPoint;
     public UIManager uiManager;
-    public TextMeshProUGUI dropPromptUI;
 
-    private bool playerInRange = false;
+    private GameObject currentBall;
+    private Rigidbody rb;
+    private bool launched = false;
+    private float timeSinceDrop = 0f;
+    public float launchDelay = 0.589f;
 
-    public GameObject LaunchBall()
+    public void DropBall()
     {
-        if (ballPrefab == null || dropPoint == null || uiManager == null) return null;
+        if (ballPrefab == null || dropPoint == null) return;
 
-        GameObject ball = Instantiate(ballPrefab, dropPoint.position, Quaternion.identity);
-        Rigidbody rb = ball.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            float angle = uiManager.lastPredictedAngle;
-            float velocity = uiManager.lastPredictedVelocity;
-            Vector3 dir = Quaternion.Euler(-angle, 0f, 0f) * Vector3.forward;
+        if (currentBall != null)
+            Destroy(currentBall);
 
-            rb.linearVelocity = dir.normalized * velocity;
-        }
-        return ball;
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            playerInRange = true;
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            playerInRange = false;
+        currentBall = Instantiate(ballPrefab, dropPoint.position, Quaternion.identity);
+        rb = currentBall.GetComponent<Rigidbody>();
+        rb.useGravity = true;
+        launched = false;
+        timeSinceDrop = 0f;
     }
 
     void Update()
     {
-        if (dropPromptUI != null)
-            dropPromptUI.enabled = playerInRange;
+        if (currentBall == null || launched || rb == null) return;
 
-        if (playerInRange && Input.GetKeyDown(KeyCode.E))
+        timeSinceDrop += Time.deltaTime;
+
+        if (timeSinceDrop >= launchDelay)
         {
-            LaunchBall();
-            dropPromptUI.enabled = false;
+            // Launch horizontally in X-Y plane
+            float angle = uiManager.lastPredictedAngle;
+            float speed = uiManager.lastPredictedVelocity;
+
+            Vector3 launchDir = Quaternion.Euler(0, 0, -angle) * Vector3.right; // launch in X
+            rb.linearVelocity = launchDir.normalized * speed;
+            launched = true;
+
+            Debug.Log($"Launched at t={timeSinceDrop:F2}s → Angle={angle:F1}°, Speed={speed:F2}");
         }
     }
 }
