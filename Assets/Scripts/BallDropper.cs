@@ -3,58 +3,28 @@ using TMPro;
 
 public class BallDropper : MonoBehaviour
 {
-    [Header("Ball Drop Settings")]
     public GameObject ballPrefab;
-
-    [Tooltip("Drop position for the ball")]
     public Transform dropPoint;
-
-    [Header("UI Settings")]
+    public UIManager uiManager;
     public TextMeshProUGUI dropPromptUI;
 
     private bool playerInRange = false;
 
-    void Start()
+    public GameObject LaunchBall()
     {
-        if (dropPromptUI != null)
-            dropPromptUI.enabled = false;
-    }
+        if (ballPrefab == null || dropPoint == null || uiManager == null) return null;
 
-    void Update()
-    {
-        if (playerInRange)
+        GameObject ball = Instantiate(ballPrefab, dropPoint.position, Quaternion.identity);
+        Rigidbody rb = ball.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            if (dropPromptUI != null)
-                dropPromptUI.enabled = true;
+            float angle = uiManager.lastPredictedAngle;
+            float velocity = uiManager.lastPredictedVelocity;
+            Vector3 dir = Quaternion.Euler(-angle, 0f, 0f) * Vector3.forward;
 
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                DropBall();
-
-                if (dropPromptUI != null)
-                    dropPromptUI.enabled = false;
-            }
+            rb.linearVelocity = dir.normalized * velocity;
         }
-        else
-        {
-            if (dropPromptUI != null)
-                dropPromptUI.enabled = false;
-        }
-    }
-
-    public GameObject DropBall()
-    {
-        if (ballPrefab != null && dropPoint != null)
-        {
-            GameObject newBall = Instantiate(ballPrefab, dropPoint.position, Quaternion.identity);
-            Debug.Log("Ball dropped at " + dropPoint.position);
-            return newBall;
-        }
-        else
-        {
-            Debug.LogWarning("Ball prefab or dropPoint is not assigned.");
-            return null;
-        }
+        return ball;
     }
 
     void OnTriggerEnter(Collider other)
@@ -67,5 +37,17 @@ public class BallDropper : MonoBehaviour
     {
         if (other.CompareTag("Player"))
             playerInRange = false;
+    }
+
+    void Update()
+    {
+        if (dropPromptUI != null)
+            dropPromptUI.enabled = playerInRange;
+
+        if (playerInRange && Input.GetKeyDown(KeyCode.E))
+        {
+            LaunchBall();
+            dropPromptUI.enabled = false;
+        }
     }
 }

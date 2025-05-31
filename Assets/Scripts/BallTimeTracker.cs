@@ -4,40 +4,30 @@ using TMPro;
 public class BallTimeTracker : MonoBehaviour
 {
     public TextMeshProUGUI timeText;
-    public PaddleHitter paddle;         // Drag your paddle GameObject with PaddleHitter.cs
-    public BallDropper ballDropper;     // Dropper that spawns the ball
-    public float setTime = 0.55f;
+    public PaddleHitter paddle;
+    public BallDropper ballDropper;
+    public float triggerTime = 0.55f;
 
     private float timer = 0f;
     private bool isCounting = false;
     private GameObject ballInstance;
-
-    private bool hasHit = false;  // Prevents multiple paddle hits
+    private bool hasHit = false;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            StartSimulation();
-        }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            ResetSimulation();
-        }
+        if (Input.GetKeyDown(KeyCode.E)) StartSimulation();
+        if (Input.GetKeyDown(KeyCode.T)) ResetSimulation();
 
         if (isCounting)
         {
             timer += Time.deltaTime;
             timeText.text = $"Ball Time: {timer:F2} s";
 
-            // Trigger paddle once at t = 0.55s
-            if (!hasHit && timer >= setTime)
+            if (!hasHit && timer >= triggerTime)
             {
                 paddle?.Hit();
                 hasHit = true;
-                Debug.Log("Paddle hit at t = 0.55s");
-            } 
+            }
         }
     }
 
@@ -46,12 +36,11 @@ public class BallTimeTracker : MonoBehaviour
         if (ballInstance != null)
             Destroy(ballInstance);
 
-        if (ballDropper != null)
-            ballInstance = ballDropper.DropBall();
+        ballInstance = ballDropper?.LaunchBall();
 
         timer = 0f;
         isCounting = true;
-        hasHit = false; // reset hit trigger
+        hasHit = false;
     }
 
     void ResetSimulation()
@@ -67,10 +56,6 @@ public class BallTimeTracker : MonoBehaviour
             ballInstance = null;
         }
 
-        // 🔁 Reset paddle rotation
         paddle?.ResetPaddle();
-
-        Debug.Log("Simulation reset.");
     }
-
 }
