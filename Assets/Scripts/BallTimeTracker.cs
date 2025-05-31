@@ -6,12 +6,13 @@ public class BallTimeTracker : MonoBehaviour
     public TextMeshProUGUI timeText;
     public PaddleHitter paddle;         // Drag your paddle GameObject with PaddleHitter.cs
     public BallDropper ballDropper;     // Dropper that spawns the ball
+    public float setTime = 0.55f;
 
     private float timer = 0f;
     private bool isCounting = false;
     private GameObject ballInstance;
 
-    private bool hasHit = false;  // ✅ Prevents multiple paddle hits
+    private bool hasHit = false;  // Prevents multiple paddle hits
 
     void Update()
     {
@@ -30,13 +31,13 @@ public class BallTimeTracker : MonoBehaviour
             timer += Time.deltaTime;
             timeText.text = $"Ball Time: {timer:F2} s";
 
-            // ✅ Trigger paddle once at t = 0.55s
-            if (!hasHit && timer >= 0.55f)
+            // Trigger paddle once at t = 0.55s
+            if (!hasHit && timer >= setTime)
             {
                 paddle?.Hit();
                 hasHit = true;
-                Debug.Log("✅ Paddle hit at t = 0.55s");
-            }
+                Debug.Log("Paddle hit at t = 0.55s");
+            } 
         }
     }
 
@@ -69,7 +70,7 @@ public class BallTimeTracker : MonoBehaviour
         // 🔁 Reset paddle rotation
         paddle?.ResetPaddle();
 
-        Debug.Log("⏹️ Simulation reset.");
+        Debug.Log("Simulation reset.");
     }
 
 }

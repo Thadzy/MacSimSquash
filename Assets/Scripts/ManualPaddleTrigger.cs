@@ -11,11 +11,11 @@ public class ManualPaddleTrigger : MonoBehaviour
             if (paddle != null)
             {
                 paddle.Hit();
-                Debug.Log("🔨 Paddle triggered manually at: " + Time.time + "s");
+                Debug.Log("Paddle triggered manually at: " + Time.time + "s");
             }
             else
             {
-                Debug.LogWarning("⚠️ Paddle reference is not assigned!");
+                Debug.LogWarning("Paddle reference is not assigned!");
             }
         }
     }

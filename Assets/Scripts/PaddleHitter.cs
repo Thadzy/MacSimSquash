@@ -1,61 +1,61 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PaddleHitter : MonoBehaviour
 {
-    public float hitAngle = 45f;
-    public float hitSpeed = 300f;
+    public float hitAngle     = 60f;   // degrees
+    public float hitSpeed     = 300f;  // deg/sec
+    public float launchForce  = 6f;    // m/s initial ball speed
 
+    Rigidbody rb;
     private float currentAngle = 0f;
-    private bool isHitting = false;
-    private bool isReturning = false;
+    private bool isHitting     = false;
 
-    private Quaternion originalRotation;
-
-    void Start()
+    void Awake()
     {
-        originalRotation = transform.rotation;
+        rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;  // so physics moves it
     }
 
     public void Hit()
     {
-        isHitting = true;
-        currentAngle = 0f;
+        isHitting     = true;
+        currentAngle  = 0f;
     }
 
     public void ResetPaddle()
     {
-        isHitting = false;
-        isReturning = false;
+        isHitting    = false;
         currentAngle = 0f;
-        transform.rotation = originalRotation;
+        transform.localRotation = Quaternion.identity;
     }
 
     void Update()
     {
-        if (isHitting)
-        {
-            float step = hitSpeed * Time.deltaTime;
-            transform.Rotate(Vector3.up, -step);  // Adjust direction if needed
-            currentAngle += step;
+        if (!isHitting) return;
 
-            if (currentAngle >= hitAngle)
-            {
-                isHitting = false;
-                isReturning = true;
-                currentAngle = 0f;
-            }
-        }
-        else if (isReturning)
-        {
-            float step = hitSpeed * Time.deltaTime;
-            transform.Rotate(Vector3.up, step);  // Return in opposite direction
-            currentAngle += step;
+        float step = hitSpeed * Time.deltaTime;
+        transform.Rotate(Vector3.up, -step);
+        currentAngle += step;
 
-            if (currentAngle >= hitAngle)
+        if (currentAngle >= hitAngle)
+            isHitting = false;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (!isHitting) return;                    // only hit during swing
+        if (collision.gameObject.CompareTag("Ball"))
+        {
+            // Calculate launch direction: use paddle's forward axis
+            Vector3 dir = transform.forward;       
+            Rigidbody ballRb = collision.rigidbody;
+            if (ballRb != null)
             {
-                isReturning = false;
-                currentAngle = 0f;
-                transform.rotation = originalRotation;
+                // Zero out any existing velocity, then apply new
+                ballRb.linearVelocity = Vector3.zero;
+                ballRb.AddForce(dir.normalized * launchForce, ForceMode.VelocityChange);
+                Debug.Log("⚡ Ball physically launched at speed " + launchForce);
             }
         }
     }

@@ -47,12 +47,12 @@ public class BallDropper : MonoBehaviour
         if (ballPrefab != null && dropPoint != null)
         {
             GameObject newBall = Instantiate(ballPrefab, dropPoint.position, Quaternion.identity);
-            Debug.Log("✅ Ball dropped at " + dropPoint.position);
+            Debug.Log("Ball dropped at " + dropPoint.position);
             return newBall;
         }
         else
         {
-            Debug.LogWarning("⚠️ Ball prefab or dropPoint is not assigned.");
+            Debug.LogWarning("Ball prefab or dropPoint is not assigned.");
             return null;
         }
     }
