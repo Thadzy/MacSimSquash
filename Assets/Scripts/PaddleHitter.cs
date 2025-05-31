@@ -3,24 +3,24 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PaddleHitter : MonoBehaviour
 {
-    public UIManager uiManager;
-    public float hitSpeed = 300f;
+    public float hitAngle = 60f;   // degrees
+    public float hitSpeed = 300f;  // deg/sec
+    public float launchForce = 6f;    // m/s initial ball speed
+
+    Rigidbody rb;
     private float currentAngle = 0f;
     private bool isHitting = false;
-    private Rigidbody rb;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true;
-        GetComponent<Collider>().isTrigger = true;
+        rb.isKinematic = true;  // so physics moves it
     }
 
     public void Hit()
     {
         isHitting = true;
         currentAngle = 0f;
-        Debug.Log("Paddle starting rotation");
     }
 
     public void ResetPaddle()
@@ -28,23 +28,34 @@ public class PaddleHitter : MonoBehaviour
         isHitting = false;
         currentAngle = 0f;
         transform.localRotation = Quaternion.identity;
-        Debug.Log("Paddle reset");
     }
 
     void Update()
     {
         if (!isHitting) return;
-
-        float targetAngle = uiManager != null ? uiManager.lastPredictedAngle : 60f;
         float step = hitSpeed * Time.deltaTime;
         transform.Rotate(Vector3.up, -step);
         currentAngle += step;
 
-        if (currentAngle >= targetAngle)
-        {
+        if (currentAngle >= hitAngle)
             isHitting = false;
-            transform.localRotation = Quaternion.Euler(-targetAngle, 0, 0);
-            Debug.Log($"Paddle reached angle: {targetAngle:F2}°");
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (!isHitting) return;                    // only hit during swing
+        if (collision.gameObject.CompareTag("Ball"))
+        {
+            // Calculate launch direction: use paddle's forward axis
+            Vector3 dir = transform.forward;
+            Rigidbody ballRb = collision.rigidbody;
+            if (ballRb != null)
+            {
+                // Zero out any existing velocity, then apply newAdd commentMore actions
+                ballRb.linearVelocity = Vector3.zero;
+                ballRb.AddForce(dir.normalized * launchForce, ForceMode.VelocityChange);
+                Debug.Log("⚡ Ball physically launched at speed " + launchForce);
+            }
         }
     }
 }
