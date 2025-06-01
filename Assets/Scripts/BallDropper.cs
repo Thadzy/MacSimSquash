@@ -5,6 +5,7 @@ public class BallDropper : MonoBehaviour
     public GameObject ballPrefab;
     public Transform dropPoint;
     public UIManager uiManager;
+    public GameObject markerPrefab;
 
     private GameObject currentBall;
     private Rigidbody rb;
@@ -37,19 +38,29 @@ public class BallDropper : MonoBehaviour
             float angle = uiManager.lastPredictedAngle;
             float speed = uiManager.lastPredictedVelocity;
 
-            Vector3 localDirection = Quaternion.Euler(-angle, 0, 0) * Vector3.forward;
-            rb.linearVelocity = localDirection.normalized * speed; // use .velocity not .linearVelocity
+            float verticalAngle = angle;
+            float horizontalPhi = 22f;
+
+            Quaternion verticalRot = Quaternion.Euler(-verticalAngle, 0, 0);
+            Quaternion horizontalRot = Quaternion.Euler(0, horizontalPhi, 0);
+
+            Vector3 launchDir = horizontalRot * (verticalRot * Vector3.forward);
+            rb.linearVelocity = launchDir.normalized * speed;
 
             launched = true;
 
-            // Optional: Animate paddle
             if (uiManager.timeTracker != null && uiManager.timeTracker.paddle != null)
-            {
                 uiManager.timeTracker.paddle.Hit();
+
+            // Marker for debug
+            if (markerPrefab != null)
+            {
+                Vector3 markerPos = dropPoint.position + launchDir.normalized * uiManager.lastTargetX;
+                markerPos.y = 0.05f;
+                Instantiate(markerPrefab, markerPos, Quaternion.identity);
             }
 
             Debug.Log($"Launched at t={timeSinceDrop:F2}s → Angle={angle:F1}°, Speed={speed:F2}");
         }
-
     }
 }

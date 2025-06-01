@@ -79,12 +79,18 @@ public class UIManager : MonoBehaviour
         if (timeTracker != null)
             timeTracker.StartSimulation();
 
-        if (markerPrefab != null)
-        {
-            Vector3 markerPosition = new Vector3(lastTargetX, 0.01f, 0f); // y slightly above ground
-            Instantiate(markerPrefab, markerPosition, Quaternion.identity);
-            Debug.Log($"🟢 Marker placed at Sx = {lastTargetX:F2} m");
-        }
-
+        // if (markerPrefab != null)
+        // {
+        //     Vector3 markerPosition = new Vector3(lastTargetX, 0.05f, 0f); // y slightly above ground
+        //     Instantiate(markerPrefab, markerPosition, Quaternion.identity);
+        //     Debug.Log($"Marker placed at Sx = {lastTargetX:F2} m");
+        // }
     }
+
+    void OnDrawGizmos()
+{
+    Gizmos.color = Color.red;
+    Gizmos.DrawSphere(new Vector3(lastTargetX, 0.05f, 0f), 0.05f);
+}
+
 }
