@@ -6,6 +6,9 @@ public class BallTimeTracker : MonoBehaviour
     public TextMeshProUGUI timeText;
     public BallDropper ballDropper;
 
+    [Header("Optional Paddle Animation")]
+    public PaddleHitter paddle;  // ✅ Add this line
+
     private float timer = 0f;
     private bool isCounting = false;
 

@@ -53,10 +53,11 @@ public class TrajectorySimulator : MonoBehaviour
             if (disc < 0) continue;
 
             float t = Mathf.Max((-b + Mathf.Sqrt(disc)) / (2 * a), (-b - Mathf.Sqrt(disc)) / (2 * a));
-            float Sx = ux * t;
+            float Sx = ux * t; 
             if (Sx < 0 || Sx > 2.65f) continue;
 
             trajectoryData.Add(new TrajectoryPoint { angleDeg = thetaDeg, displacement = Sx });
+            Debug.Log($"Angle: {thetaDeg}, Displacement: {Sx}, Velocity: {u}, Time: {t}");
         }
     }
 
@@ -84,13 +85,13 @@ public class TrajectorySimulator : MonoBehaviour
         return Mathf.Sqrt(Vb * Vb + Mathf.Pow(ub * sinT, 2));
     }
 
-    public string GetZoneColor(float x)
+    public string GetZoneColor(float Sx)
     {
-        if (x >= 0.75f && x < 1.13f) return "Light Blue";
-        if (x >= 1.13f && x < 1.51f) return "Green";
-        if (x >= 1.51f && x < 1.89f) return "Yellow";
-        if (x >= 1.89f && x < 2.27f) return "Orange";
-        if (x >= 2.27f && x <= 2.65f) return "Red";
+        if (Sx >= 0.75f && Sx < 1.13f) return "Light Blue";
+        if (Sx >= 1.13f && Sx < 1.51f) return "Green";
+        if (Sx >= 1.51f && Sx < 1.89f) return "Yellow";
+        if (Sx >= 1.89f && Sx < 2.27f) return "Orange";
+        if (Sx >= 2.27f && Sx <= 2.65f) return "Red";
         return "Out of Bounds";
     }
 }

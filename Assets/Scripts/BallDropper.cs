@@ -34,15 +34,22 @@ public class BallDropper : MonoBehaviour
 
         if (timeSinceDrop >= launchDelay)
         {
-            // Launch horizontally in X-Y plane
             float angle = uiManager.lastPredictedAngle;
             float speed = uiManager.lastPredictedVelocity;
 
-            Vector3 launchDir = Quaternion.Euler(0, 0, -angle) * Vector3.right; // launch in X
-            rb.linearVelocity = launchDir.normalized * speed;
+            Vector3 localDirection = Quaternion.Euler(-angle, 0, 0) * Vector3.forward;
+            rb.linearVelocity = localDirection.normalized * speed; // use .velocity not .linearVelocity
+
             launched = true;
+
+            // Optional: Animate paddle
+            if (uiManager.timeTracker != null && uiManager.timeTracker.paddle != null)
+            {
+                uiManager.timeTracker.paddle.Hit();
+            }
 
             Debug.Log($"Launched at t={timeSinceDrop:F2}s → Angle={angle:F1}°, Speed={speed:F2}");
         }
+
     }
 }
