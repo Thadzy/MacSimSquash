@@ -10,8 +10,8 @@ public class SettingsUIManager : MonoBehaviour
 
     [Header("Default Values")]
     public float defaultDropHeight = 2.0f;
-    public float defaultCOR = 0.5f;
-    public float defaultSpringConstant = 10f;
+    public float defaultCOR = 0.211f;
+    public float defaultSpringConstant = 2.1f; // Match default in TrajectorySimulator
 
     void Start()
     {
