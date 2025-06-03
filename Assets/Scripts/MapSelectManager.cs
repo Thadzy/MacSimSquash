@@ -3,13 +3,19 @@ using UnityEngine.SceneManagement;
 
 public class MapSelectManager : MonoBehaviour
 {
-    // Called from UI Button
-    public void SelectMap(int mapId)
+    public void SelectMap(int mapIndex)
     {
-        PlayerPrefs.SetInt("SelectedMap", mapId);  // 🧠 Store map choice for next scene
-        Debug.Log("Map " + mapId + " selected.");
+        PlayerPrefs.SetInt("SelectedMap", mapIndex);
+        PlayerPrefs.Save();
 
-        // Load gameplay scene
-        SceneManager.LoadScene("MainGameScene"); // 🛠 Replace with your real gameplay scene name
+        Debug.Log("Selected Map: " + mapIndex);
+
+        // Now load the gameplay scene
+        SceneManager.LoadScene("MainGameScene"); // Ensure this scene exists
+    }
+
+    public void BackToStart()
+    {
+        SceneManager.LoadScene("StarterScene");
     }
 }
