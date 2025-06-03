@@ -426,9 +426,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57024156eca054a2abdb0f34d1f1382c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topViewCamera: {fileID: 0}
-  desiredMapWidth: 3
-  desiredMapHeight: 2
+  topViewCamera: {fileID: 5335916}
+  mapRoot: {fileID: 0}
+  padding: 0.5
 --- !u!1 &22664894 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a61284a85ff044d9c895c0364a3ffe9f, type: 3}
@@ -4025,7 +4025,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -378, y: 233}
+  m_AnchoredPosition: {x: -314, y: 237}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1454014579
@@ -4076,8 +4076,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topViewCamera: {fileID: 5335916}
-  desiredMapWidth: 3
-  desiredMapHeight: 2
+  mapRoot: {fileID: 0}
+  padding: 0.5
 --- !u!1 &1518553467
 GameObject:
   m_ObjectHideFlags: 0
@@ -4110,10 +4110,8 @@ MonoBehaviour:
   map1Prefab: {fileID: 8118783646971390855, guid: 40d542935f5f74789bbd7b085bfa7719, type: 3}
   map2Prefab: {fileID: 571158717287355976, guid: b013cbecc50cb47bdba8d6de0599260f, type: 3}
   map3Prefab: {fileID: 2113625161263463336, guid: 4c17623c00da341d9820b662f1b2c325, type: 3}
-  map1SpawnPos: {x: 3.06, y: 0.01, z: 1.512}
-  map2SpawnPos: {x: 3.06, y: 0.01, z: 2.323}
-  map3SpawnPos: {x: 3.06, y: 0.01, z: 1.512}
-  mapRotation: {x: -90, y: 0, z: -90}
+  mapRoot: {fileID: 0}
+  cameraController: {fileID: 5335918}
 --- !u!224 &1518553469
 RectTransform:
   m_ObjectHideFlags: 0

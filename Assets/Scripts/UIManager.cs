@@ -68,11 +68,11 @@ public class UIManager : MonoBehaviour
             corValueText.text = $"COR: {cor:F2}";
 
         if (outputAngleText != null)
-            outputAngleText.text = $"Suggested Paddle Angle: {bestAngle:F2}°";
+            outputAngleText.text = $"Paddle Angle: {bestAngle:F2}°";
 
         string zone = predictor.GetZoneColor(targetX);
         if (zoneColorText != null)
-            zoneColorText.text = $"Zone Color: {zone}";
+            zoneColorText.text = $"{zone}";
 
         Debug.Log($"TargetX={targetX} → Best Angle: {bestAngle:F2}°");
 
