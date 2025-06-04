@@ -20,10 +20,10 @@ public class TrajectorySimulator : MonoBehaviour
 {
     #region Physics Parameters
     [Header("Physics Settings")]
-    public float paddleVelocity = 10f;    // Initial paddle velocity (up) in m/s
-    public float cor = 0.5f;              // Coefficient of Restitution (e)
+    public float paddleVelocity = 5.5f;    // Initial paddle velocity (up) in m/s
+    public float cor = 0.37f;              // Coefficient of Restitution (e)
     public float massBall = 0.024f;       // Ball mass (m) in kg
-    public float massPaddle = 0.1f;       // Paddle mass (M) in kg
+    public float massPaddle = 0.268f;       // Paddle mass (M) in kg
     public float gravity = 9.81f;         // Gravitational acceleration (g) in m/s²
     public float launchHeight = 0.3f;     // Initial height above ground (h) in m
     #endregion
@@ -32,7 +32,7 @@ public class TrajectorySimulator : MonoBehaviour
     [Header("Simulation Settings")]
     public float minAngle = 1f;     // Minimum launch angle (degrees)
     public float maxAngle = 90f;    // Maximum launch angle (degrees) - extended to 90°
-    public float angleStep = 0.1f;  // Angle increment for simulation (degrees)
+    public float angleStep = 1f;  // Angle increment for simulation (degrees)
     #endregion
 
     #region Target Settings
@@ -170,23 +170,23 @@ public class TrajectorySimulator : MonoBehaviour
     /// Find best paddle angle for target X distance (10-90 degrees as specified)
     /// </summary>
     public float GetAngleForTargetX(float targetX)
+{
+    float bestAngle = -1f;
+    float minDifference = float.MaxValue;
+
+    // Prefer higher angles if difference is the same
+    foreach (var point in trajectoryData)
     {
-        float bestAngle = -1f;
-        float minDifference = float.MaxValue;
-
-        // Search through all simulated angles to find closest match
-        foreach (var point in trajectoryData)
+        float difference = Mathf.Abs(point.displacement - targetX);
+        if (difference < minDifference || (Mathf.Approximately(difference, minDifference) && point.angleDeg > bestAngle))
         {
-            float difference = Mathf.Abs(point.displacement - targetX);
-            if (difference < minDifference)
-            {
-                bestAngle = point.angleDeg;
-                minDifference = difference;
-            }
+            bestAngle = point.angleDeg;
+            minDifference = difference;
         }
-
-        return bestAngle;
     }
+
+    return bestAngle;
+}
 
     /// <summary>
     /// Calculate Sy (height) at target X position for given angle
